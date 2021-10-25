@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ESP IoT Firebase App</title>
+
+    <!-- update the version number as needed -->
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-app.js"></script>
+   
+    <!-- include only the Firebase features as you need -->
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.8.1/firebase-database.js"></script>
+
+    <script>
+      // IMPORTANT!!!
+      // Replace with your app config object
+      var config = {
+        apiKey: "AIzaSyBNyklqafaavq8HXXXXXXXXXXXXXXX",
+        authDomain: "esp-iot-app.firebaseapp.com",
+        databaseURL: "https://esp-iot-app-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "esp-iot-app",
+        storageBucket: "esp-iot-app.appspot.com",
+        messagingSenderId: "XXXXXXXXXX",
+        appId: "1:306720567843:web:f5d89957XXXXXXXXXXXXX"
+      };
+
+      // Initialize firebase
+      firebase.initializeApp(config);
+      
+      // Make auth and database references
+      const auth = firebase.auth();
+      const db = firebase.database();
+  
+    </script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  </head>
+  <body  class="min-vh-100 d-flex flex-column justify-content-between">
+
+    <!--NAVBAR-->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container d-flex justify-content-between">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">
+            <img src="logo.png" alt="" width="30" height="24" class="d-inline-block align-text-top">
+            <strong>ESP Firebase App 🔥</strong>
+          </a>
+        </div>
+        <div class="navbar-collapse justify-content-end" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="#" id="login-link">
+                <button id="loginBtn" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#login-modal">Login</button>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" id="logout-link" style="display: none;">
+                <button id="logoutBtn" class="btn btn-secondary navbar-btn" data-bs-toggle="modal" data-bs-target="#logout-modal">Logout</button>
+              </a>
+            </li>
+          </ul>
+          <span class="navbar-text" id="user-details" style="display: none;">
+            User details
+          </span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- LOGIN MODAL -->
+    <div class="modal fade" id="login-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Login</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Insert your email and password to login.</p>
+            <form id="login-form">
+              <div class="mb-3">
+                <label for="inputEmail" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="input-email">
+              </div>
+              <div class="mb-3">
+                <label for="inputPassword" class="form-label">Password</label>
+                <input type="password" class="form-control" id="input-password">
+              </div>
+              <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGOUT MODAL -->
+    <div class="modal fade" id="logout-modal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Logout</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to logout?</p>
+          </div>
+          <div class="modal-footer">
+            <button id="logout" type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Logout</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+      <!-- PAGE CONTENT -->
+
+    <!-- Content if user is logged out -->
+    <div id="signedOutMessage" class="text-center" style="display: none;">You are logged out or user doesn't have permissions.</div>
+    
+    <!-- Content if user is logged in -->
+    <div class="container mt-4 mb-4" id="dashboardSignedIn" style="display: none;">
+
+      <!--Container for buttons-->
+      <div class="row mb-3">
+        <!-- button 1-->
+        <div class="col-sm mb-3 text-center">
+          <div class="card">
+            <h5 class="card-header">GPIO 2</h5>
+            <div class="card-body">
+              <h5 class="card-title">Current state: <span id="btn1State"></span></h5>
+              <button id="btn1On" class="btn btn-lg btn-block btn-success">TURN ON</button>
+              <button id="btn1Off" class="btn btn-lg btn-block btn-outline-secondary">TURN OFF</button>            
+            </div>
+          </div>
+        </div>
+        <!-- button 2-->
+        <div class="col-sm mb-3 text-center">
+          <div class="card">
+            <h5 class="card-header">GPIO 12</h5>
+            <div class="card-body">
+              <h5 class="card-title">Current state: <span id="btn2State"></span></h5>
+              <button id="btn2On" class="btn btn-lg btn-block btn-success">TURN ON</button>
+              <button id="btn2Off" class="btn btn-lg btn-block btn-outline-secondary">TURN OFF</button>            
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!--Container for sliders-->
+      <div class="row mb-3">
+        <!-- Slider 1 -->
+        <div class="col-sm mb-3 text-center">
+          <div class="card">
+            <div class="card-header">
+              <h4>GPIO 13</h4>
+            </div>
+            <div class="card-body">
+              <h2 class="card-title" id="sld1Value"></h2>
+              <input id="sld1" type="range" min="0" max="100" style="width:100%;">
+            </div>
+          </div>
+        </div>
+         <!-- Slider 2 -->
+         <div class="col-sm mb-3 text-center">
+          <div class="card">
+            <div class="card-header">
+              <h4>GPIO 14</h4>
+           </div>
+            <div class="card-body">
+              <h2 class="card-title" id="sld2Value"></h2>
+              <input id="sld2" type="range" min="0" max="100" style="width:100%;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--Container for sensor readings-->
+      <div class="row mb-3">
+        <div class="col-mb-3 text-center">
+          <!-- Table with Sensor Readings -->
+          <div class="card">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">Reading</th>
+                  <th scope="col">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>BME Temperature</td>
+                  <td id="bmeTemp"></td>
+                </tr>
+                <tr>
+                  <td>BME Humidity</td>
+                  <td id="bmeHumi"></td>
+                </tr>
+                <tr>
+                  <td>BME Pressure</td>
+                  <td id="bmePres"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Container for input message -->
+      <div class="row">
+        <div class="col-mb-2 text-center">      
+          <!-- Input Message 1 -->
+          <div class="card">
+            <div class="card-header">
+              <h4>Input Message</h4>
+            </div>
+            <p id="input1Text" class="m-2 jus"></p>
+            <form>
+              <div class="form-group mb-2">
+                <input type="text" class="form-control" style="width: 100%;" id="input1">
+              </div>
+            </form>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div class="container footer navbar-fixed-bottom bg-light">
+    <footer class=" text-center text-lg-start">
+      <!-- Copyright -->
+      <div class="text-center p-3">
+        Powered by:
+        <a class="text-dark" href="https://randomnerdtutorials.com/">Random Nerd Tutorials</a>
+      </div>
+      <!-- Copyright -->
+    </footer>
+  </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+    <script src="scripts/auth.js"></script>
+    <script src="scripts/index.js"></script>
+  </body>
+</html>

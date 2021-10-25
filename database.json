@@ -1,0 +1,22 @@
+{
+  "UsersData" : {
+    "REPLACE_WITH_YOUR_USER_UID" : {
+      "outputs" : {
+        "digital" : {
+          "2" : 0,
+          "12" : 1
+        },
+        "message" : "I love this app",
+        "pwm" : {
+          "13" : 20,
+          "14" : 80
+        }
+      },
+      "sensor" : {
+        "humidity" : 52.50,
+        "pressure" : 1006.13,
+        "temperature" : 25.00
+      }
+    }
+  }
+}
