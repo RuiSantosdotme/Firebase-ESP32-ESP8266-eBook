@@ -15,7 +15,7 @@
     <script>
       // IMPORTANT!!!
       // Replace with your app config object
-      var config = {
+      var firebaseConfig = {
         apiKey: "AIzaSyBNyklqafaavq8HXXXXXXXXXXXXXXX",
         authDomain: "esp-iot-app.firebaseapp.com",
         databaseURL: "https://esp-iot-app-default-rtdb.europe-west1.firebasedatabase.app",
@@ -26,7 +26,7 @@
       };
 
       // Initialize firebase
-      firebase.initializeApp(config);
+      firebase.initializeApp(firebaseConfig);
       
       // Make auth and database references
       const auth = firebase.auth();
