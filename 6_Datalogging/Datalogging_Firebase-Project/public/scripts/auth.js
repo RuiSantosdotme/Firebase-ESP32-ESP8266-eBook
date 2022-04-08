@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function(){
-  // listen for auth status changes
-  auth.onAuthStateChanged(user => {
+ // listen for auth status changes
+ auth.onAuthStateChanged(user => {
     if (user) {
       console.log("user logged in");
       console.log(user);
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function(){
       setupUI();
     }
   });
-
+  
   // login
   const loginForm = document.querySelector('#login-form');
   loginForm.addEventListener('submit', (e) => {
@@ -25,13 +25,13 @@ document.addEventListener("DOMContentLoaded", function(){
       // close the login modal & reset form
       $('#login-modal').modal("hide");
       loginForm.reset();
-    });
-  });
-
-  // logout
-  const logout = document.querySelector('#logout');
-  logout.addEventListener('click', (e) => {
-    e.preventDefault();
-    auth.signOut();
-  });
+     });
+   });
+  
+   // logout
+   const logout = document.querySelector('#logout');
+   logout.addEventListener('click', (e) => {
+     e.preventDefault();
+     auth.signOut();
+   });
 });
